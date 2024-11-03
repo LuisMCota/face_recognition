@@ -36,11 +36,21 @@ attendance_data = pd.DataFrame({
     'Asistencia': np.random.choice(['Presente', 'Ausente'], size=30)
 })
 
+# Global DataFrame to store registered students
+if 'students_data' not in st.session_state:
+    st.session_state['students_data'] = pd.DataFrame(columns=["Nombre", "Tuition ID"])
+
 # Function to display attendance information
 def mostrar_asistencia():
     st.title("Panel General - Información de Asistencia")
     st.write("Aquí puedes ver el historial de asistencia de los alumnos.")
     st.dataframe(attendance_data)  # Display attendance data as a table
+
+# Function to display student information
+def informacion_alumno():
+    st.title("Información del Alumno")
+    st.write("Lista de alumnos registrados en el sistema.")
+    st.dataframe(st.session_state['students_data'])  # Display registered students data
 
 # Attendance-taking function
 def tomar_asistencia():
@@ -101,6 +111,12 @@ def agregar_alumno():
                 # Check for successful retraining response
                 if response.status_code == 200:
                     st.success(f"Alumno '{nombre_alumno}' registrado y modelo actualizado con TuitionID: {tuition_id}.")
+                    
+                    # Add the new student data to the DataFrame
+                    st.session_state['students_data'] = st.session_state['students_data'].append(
+                        {"Nombre": nombre_alumno, "Tuition ID": tuition_id}, 
+                        ignore_index=True
+                    )
                 else:
                     st.error("Error al registrar el alumno. Intente nuevamente.")
             except Exception as e:
@@ -132,6 +148,8 @@ with st.sidebar:
 # Route based on selected option
 if selected == "Panel General":
     mostrar_asistencia()
+elif selected == "Información del Alumno":
+    informacion_alumno()
 elif selected == "Tomar Asistencia":
     tomar_asistencia()
 elif selected == "Agregar Alumno":
