@@ -44,16 +44,58 @@ def mostrar_asistencia():
         if response.status_code == 200:
             attendance_records = data.get('records', [])
             if attendance_records:
-                # Convert records to a DataFrame and display it
+                # Convert records to a DataFrame
                 df = pd.DataFrame(attendance_records)
-                st.write("Historial de Asistencia")
-                st.dataframe(df)
+                
+                # Convert 'Timestamp' to datetime and extract date for filtering
+                df['Date'] = pd.to_datetime(df['Timestamp']).dt.date
 
-                # Display attendance statistics
-                if 'Status' in df.columns:
-                    status_counts = df['Status'].value_counts()
-                    st.write("Estadísticas de Asistencia")
-                    st.bar_chart(status_counts)
+                # Layout for filters side by side
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    # Filter by Correct Name (without a default selection)
+                    correct_names = df['CorrectName'].unique()
+                    selected_name = st.selectbox("Selecciona el nombre del alumno:", options=[""] + list(correct_names))
+
+                with col2:
+                    # Filter by Date Range (without a default selection)
+                    min_date = df['Date'].min()
+                    max_date = df['Date'].max()
+                    start_date, end_date = st.date_input("Selecciona el rango de fechas:", [min_date, max_date])
+
+                # Apply filters if selected, otherwise show all data
+                if selected_name:
+                    filtered_df = df[df['CorrectName'] == selected_name]
+                else:
+                    filtered_df = df  # No name filter applied
+
+                if start_date and end_date:
+                    filtered_df = filtered_df[(filtered_df['Date'] >= start_date) & (filtered_df['Date'] <= end_date)]
+                
+                # Display total counts for each status above the chart, centered
+                st.write("### Totales de Asistencia")
+                total_counts = filtered_df['Status'].value_counts()
+                col1, col2, col3 = st.columns(3)
+                col1.metric("A Tiempo", total_counts.get('attended', 0))
+                col2.metric("Tarde", total_counts.get('tardy', 0))
+                col3.metric("Ausente", total_counts.get('missed', 0))
+
+                # Group by Date and Status to count attendances
+                attendance_by_date = filtered_df.groupby(['Date', 'Status']).size().reset_index(name='Count')
+                
+                # Plot attendance by date with stacked bars
+                st.write("Asistencias por Fecha")
+                fig = px.bar(
+                    attendance_by_date,
+                    x='Date',
+                    y='Count',
+                    color='Status',
+                    labels={'Count': 'Cantidad', 'Date': 'Fecha'},
+                    title="Asistencias por Fecha",
+                    barmode='stack'  # Set the bar mode to 'stack' for stacked bars
+                )
+                st.plotly_chart(fig)
             else:
                 st.warning("No hay registros de asistencia disponibles.")
         else:
@@ -132,7 +174,7 @@ def agregar_alumno():
 with st.sidebar:
     selected = option_menu(
         menu_title="Menú Principal",
-        options=["Panel General", "Información del Alumno", "Agregar Alumno", "Tomar Asistencia", "Mostrar Asistencia"],
+        options=["Panel General", "Agregar Alumno", "Tomar Asistencia"],
         icons=["house", "person-circle", "person-plus", "camera", "clipboard-data"],
         menu_icon="cast",
         default_index=0,
@@ -154,5 +196,5 @@ if selected == "Tomar Asistencia":
     tomar_asistencia()
 elif selected == "Agregar Alumno":
     agregar_alumno()
-elif selected == "Mostrar Asistencia":
+elif selected == "Panel General":
     mostrar_asistencia()
