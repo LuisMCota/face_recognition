@@ -3,7 +3,7 @@ import io
 from PIL import Image
 import pandas as pd
 
-api_base_url = "https://a2a2-2806-10b7-3-c248-285f-e846-87cf-3e85.ngrok-free.app"
+api_base_url = "https://3bdf-2806-10b7-3-c248-285f-e846-87cf-3e85.ngrok-free.app"
 
 def fetch_attendance_data():
     try:
