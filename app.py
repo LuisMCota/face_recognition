@@ -36,22 +36,6 @@ attendance_data = pd.DataFrame({
     'Asistencia': np.random.choice(['Presente', 'Ausente'], size=30)
 })
 
-# Global DataFrame to store registered students
-if 'students_data' not in st.session_state:
-    st.session_state['students_data'] = pd.DataFrame(columns=["Nombre", "Tuition ID"])
-
-# Function to display attendance information
-def mostrar_asistencia():
-    st.title("Panel General - Información de Asistencia")
-    st.write("Aquí puedes ver el historial de asistencia de los alumnos.")
-    st.dataframe(attendance_data)  # Display attendance data as a table
-
-# Function to display student information
-def informacion_alumno():
-    st.title("Información del Alumno")
-    st.write("Lista de alumnos registrados en el sistema.")
-    st.dataframe(st.session_state['students_data'])  # Display registered students data
-
 # Attendance-taking function
 def tomar_asistencia():
     st.title("Tomar Asistencia")
@@ -65,7 +49,7 @@ def tomar_asistencia():
         image.save(img_byte_arr, format='JPEG')
         img_byte_arr = img_byte_arr.getvalue()
         
-        api_url = "https://d9b1-2806-10b7-3-c248-285f-e846-87cf-3e85.ngrok-free.app/predict_image"
+        api_url = "http://192.168.1.110:10000/predict_image"  # Local endpoint for testing
         
         try:
             response = requests.post(api_url, files={"file": img_byte_arr})
@@ -98,7 +82,7 @@ def agregar_alumno():
             img_byte_arr = img_byte_arr.getvalue()
             
             # Define the API endpoint for retraining
-            api_url = "https://d9b1-2806-10b7-3-c248-285f-e846-87cf-3e85.ngrok-free.app/retrain"
+            api_url = "http://192.168.1.110:10000/retrain"  # Local endpoint for testing
             
             # Send POST request with the image, name, and tuition ID
             try:
@@ -111,18 +95,13 @@ def agregar_alumno():
                 # Check for successful retraining response
                 if response.status_code == 200:
                     st.success(f"Alumno '{nombre_alumno}' registrado y modelo actualizado con TuitionID: {tuition_id}.")
-                    
-                    # Add the new student data to the DataFrame
-                    st.session_state['students_data'] = st.session_state['students_data'].append(
-                        {"Nombre": nombre_alumno, "Tuition ID": tuition_id}, 
-                        ignore_index=True
-                    )
                 else:
                     st.error("Error al registrar el alumno. Intente nuevamente.")
             except Exception as e:
                 st.error(f"Error en la conexión con el servidor: {e}")
         else:
             st.warning("Por favor, ingrese el nombre del alumno, su Tuition ID y capture una foto.")
+
 
 # Sidebar menu
 with st.sidebar:
@@ -146,11 +125,7 @@ with st.sidebar:
     )
 
 # Route based on selected option
-if selected == "Panel General":
-    mostrar_asistencia()
-elif selected == "Información del Alumno":
-    informacion_alumno()
-elif selected == "Tomar Asistencia":
+if selected == "Tomar Asistencia":
     tomar_asistencia()
 elif selected == "Agregar Alumno":
     agregar_alumno()
