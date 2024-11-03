@@ -5,3 +5,12 @@ mkdocs
 pip
 python-dotenv
 -e .
+streamlit
+streamlit-option-menu
+pandas
+plotly
+Pillow
+numpy
+requests
+uuid
+opencv-python-headless  # opencv was mentioned in prior scripts, adding for completeness
