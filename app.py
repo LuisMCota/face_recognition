@@ -7,9 +7,9 @@ import io
 import numpy as np
 import requests
 from PIL import Image
-import uuid  # Import uuid for generating unique TuitionID
+import uuid
 
-st.set_page_config(page_title="Facial recognition", page_icon="👤", layout="wide")
+st.set_page_config(page_title="Facial Recognition & Attendance", page_icon="👤", layout="wide")
 st.markdown(
     """
     <style>
@@ -29,12 +29,37 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Dummy attendance data for display purposes
-attendance_data = pd.DataFrame({
-    'Fecha': pd.date_range(start='2024-11-01', periods=30, freq='D').date,
-    'Alumno': (['Karina Campos', 'Luis Cota', 'Hector Zanatta', 'Eduardo Mendoza', 'Jair Martinez'] * 6)[:30],
-    'Asistencia': np.random.choice(['Presente', 'Ausente'], size=30)
-})
+# Define the base URL of your API server (update this to ngrok link when needed)
+api_base_url = "https://a2a2-2806-10b7-3-c248-285f-e846-87cf-3e85.ngrok-free.app"
+
+# Function to display attendance records
+def mostrar_asistencia():
+    st.title("Registro de Asistencia")
+    
+    api_url = f"{api_base_url}/get_attendance_records"
+    try:
+        response = requests.get(api_url)
+        data = response.json()
+
+        if response.status_code == 200:
+            attendance_records = data.get('records', [])
+            if attendance_records:
+                # Convert records to a DataFrame and display it
+                df = pd.DataFrame(attendance_records)
+                st.write("Historial de Asistencia")
+                st.dataframe(df)
+
+                # Display attendance statistics
+                if 'Status' in df.columns:
+                    status_counts = df['Status'].value_counts()
+                    st.write("Estadísticas de Asistencia")
+                    st.bar_chart(status_counts)
+            else:
+                st.warning("No hay registros de asistencia disponibles.")
+        else:
+            st.error("No se pudo obtener los registros de asistencia.")
+    except Exception as e:
+        st.error(f"Error en la conexión con el servidor: {e}")
 
 # Attendance-taking function
 def tomar_asistencia():
@@ -49,7 +74,7 @@ def tomar_asistencia():
         image.save(img_byte_arr, format='JPEG')
         img_byte_arr = img_byte_arr.getvalue()
         
-        api_url = "http://192.168.1.110:10000/predict_image"  # Local endpoint for testing
+        api_url = f"{api_base_url}/predict_image"
         
         try:
             response = requests.post(api_url, files={"file": img_byte_arr})
@@ -65,12 +90,13 @@ def tomar_asistencia():
     else:
         st.info("Por favor, capture una foto para verificar la asistencia.")
 
+# Student registration function
 def agregar_alumno():
     st.title("Agregar Nuevo Alumno")
     
     # Input fields for name and tuition ID
     nombre_alumno = st.text_input("Nombre del Alumno")
-    tuition_id = st.text_input("Tuition ID del Alumno")  # New input field for Tuition ID
+    tuition_id = st.text_input("Tuition ID del Alumno")
     foto_alumno = st.camera_input("Captura una foto del alumno")
 
     if st.button("Registrar Alumno"):
@@ -82,14 +108,14 @@ def agregar_alumno():
             img_byte_arr = img_byte_arr.getvalue()
             
             # Define the API endpoint for retraining
-            api_url = "http://192.168.1.110:10000/retrain"  # Local endpoint for testing
+            api_url = f"{api_base_url}/retrain"
             
             # Send POST request with the image, name, and tuition ID
             try:
                 response = requests.post(
                     api_url,
                     files={"image": ("image.jpg", img_byte_arr, "image/jpeg")},
-                    data={"label": nombre_alumno, "tuition_id": tuition_id}  # Include tuition_id in the data
+                    data={"label": nombre_alumno, "tuition_id": tuition_id}
                 )
                 
                 # Check for successful retraining response
@@ -102,13 +128,12 @@ def agregar_alumno():
         else:
             st.warning("Por favor, ingrese el nombre del alumno, su Tuition ID y capture una foto.")
 
-
 # Sidebar menu
 with st.sidebar:
     selected = option_menu(
         menu_title="Menú Principal",
-        options=["Panel General", "Información del Alumno", "Agregar Alumno", "Tomar Asistencia"],
-        icons=["house", "person-circle", "person-plus", "camera"],
+        options=["Panel General", "Información del Alumno", "Agregar Alumno", "Tomar Asistencia", "Mostrar Asistencia"],
+        icons=["house", "person-circle", "person-plus", "camera", "clipboard-data"],
         menu_icon="cast",
         default_index=0,
         styles={
@@ -129,3 +154,5 @@ if selected == "Tomar Asistencia":
     tomar_asistencia()
 elif selected == "Agregar Alumno":
     agregar_alumno()
+elif selected == "Mostrar Asistencia":
+    mostrar_asistencia()
