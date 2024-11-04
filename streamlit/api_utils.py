@@ -3,7 +3,7 @@ import io
 from PIL import Image
 import pandas as pd
 
-api_base_url = "http://192.168.1.83:8080"
+api_base_url = "https://face-recognition-app-77024392592.us-central1.run.app"
 
 def fetch_attendance_data():
     try:
