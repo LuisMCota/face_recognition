@@ -6,10 +6,7 @@ from style import set_styles
 import pandas as pd
 import firebase_admin
 from firebase_admin import credentials, auth, initialize_app
-from dotenv import load_dotenv
 import os
-
-load_dotenv()
 
 # Crear el objeto de credenciales a partir de las variables de entorno
 cred = credentials.Certificate({
