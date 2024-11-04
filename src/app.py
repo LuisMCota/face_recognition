@@ -5,30 +5,7 @@ from attendance_utils import apply_filters, display_totals, display_attendance_c
 from style import set_styles
 import pandas as pd
 import firebase_admin
-from firebase_admin import credentials, initialize_app
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
-
-# Crear el objeto de credenciales a partir de las variables de entorno
-cred = credentials.Certificate({
-    "type": os.getenv("FIREBASE_TYPE"),
-    "project_id": os.getenv("FIREBASE_PROJECT_ID"),
-    "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
-    "private_key": os.getenv("FIREBASE_PRIVATE_KEY").replace("\\n", "\n"),
-    "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
-    "client_id": os.getenv("FIREBASE_CLIENT_ID"),
-    "auth_uri": os.getenv("FIREBASE_AUTH_URI"),
-    "token_uri": os.getenv("FIREBASE_TOKEN_URI"),
-    "auth_provider_x509_cert_url": os.getenv("FIREBASE_AUTH_PROVIDER_X509_CERT_URL"),
-    "client_x509_cert_url": os.getenv("FIREBASE_CLIENT_X509_CERT_URL")
-})
-
-# Inicializar la app de Firebase si no está ya inicializada
-if not firebase_admin._apps:
-    initialize_app(cred)
-    
 set_styles()
 
 # Panel de asistencia
