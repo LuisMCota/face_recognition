@@ -3,7 +3,7 @@ import io
 from PIL import Image
 import pandas as pd
 
-api_base_url = "http://192.168.1.83:10000"
+api_base_url = "http://192.168.1.83:8080"
 
 def fetch_attendance_data():
     try:

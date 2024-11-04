@@ -1,7 +1,7 @@
 import streamlit as st
 
 def set_styles():
-    st.set_page_config(page_title="Facial Recognition & Attendance", page_icon="👤", layout="wide")
+    st.set_page_config(page_title="Facial Recognition", page_icon="👤", layout="wide")
     st.markdown(
         """
         <style>

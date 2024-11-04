@@ -1,7 +1,8 @@
-# Usa una imagen base de Python
-FROM python:3.8-slim
+FROM python:3.12-slim
 
-# Instala dependencias de sistema necesarias para OpenCV, DeepFace y otras dependencias de imagen
+WORKDIR /app
+
+# Instalar dependencias de sistema necesarias para OpenCV y DeepFace
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
     libglib2.0-0 \
@@ -10,18 +11,15 @@ RUN apt-get update && apt-get install -y \
     libxrender1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Establece el directorio de trabajo en el contenedor
-WORKDIR /app
+# Copiar el archivo de requisitos e instalar dependencias de Python
+COPY requirements.txt requirements.txt
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt --root-user-action=ignore
 
-# Copia requirements.txt y luego instala dependencias de Python
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copia el resto de los archivos de la aplicación al contenedor
+# Copiar el resto de los archivos de la aplicación
 COPY . .
 
-# Exponer el puerto (ajusta según sea necesario: 5000 para Flask, 8501 para Streamlit)
-EXPOSE 8501
+EXPOSE 8080
 
-# Iniciar la aplicación (ajusta según tu framework)
-CMD ["streamlit", "run", "API/server.py"]
+# Ejecutar la aplicación
+CMD ["python", "server.py"]

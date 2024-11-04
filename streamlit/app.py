@@ -7,14 +7,29 @@ import pandas as pd
 
 set_styles()
 
-def mostrar_asistencia():
+def mostrar_asistencia(): 
     st.title("Registro de Asistencia")
     df = fetch_attendance_data()
+    
     if not df.empty:
+        # Convertir el campo de timestamp a fecha
         df['Date'] = pd.to_datetime(df['Timestamp']).dt.date
+        
+        # Aplicar filtros, mostrar totales y gráficos
         filtered_df = apply_filters(df)
         display_totals(filtered_df)
         display_attendance_chart(filtered_df)
+
+        # Convertir el DataFrame filtrado a CSV para descarga
+        csv_data = filtered_df.to_csv(index=False)
+        
+        # Botón de descarga
+        st.download_button(
+            label="Descargar Asistencia en CSV",
+            data=csv_data,
+            file_name="registro_asistencia.csv",
+            mime="text/csv"
+        )
     else:
         st.warning("No hay registros de asistencia disponibles.")
 
@@ -57,7 +72,7 @@ with st.sidebar:
             menu_icon="cast",
             default_index=0,
             styles={
-                "container": {"padding": "5px", "background-color": "#E6E6FA"},
+                "container": {"padding": "5px", "background-color": "#A9A9A9"},
                 "icon": {"color": "#FFA500", "font-size": "20px"},
                 "nav-link": {
                     "font-size": "18px",
