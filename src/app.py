@@ -4,7 +4,6 @@ from api_utils import fetch_attendance_data, send_image_for_prediction, register
 from attendance_utils import apply_filters, display_totals, display_attendance_chart
 from style import set_styles
 import pandas as pd
-import firebase_admin
 
 set_styles()
 
