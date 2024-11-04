@@ -15,4 +15,3 @@ retina-face
 fire
 gunicorn
 deepface
-libgl1 
