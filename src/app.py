@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-from src.api_utils import fetch_attendance_data, send_image_for_prediction, register_student
+from api_utils import fetch_attendance_data, send_image_for_prediction, register_student
 from attendance_utils import apply_filters, display_totals, display_attendance_chart
 from style import set_styles
 import pandas as pd
