@@ -1,0 +1,16 @@
+streamlit
+requests
+numpy
+pandas
+gdown
+tqdm
+Pillow
+opencv-python
+tensorflow
+keras
+Flask
+flask_cors
+mtcnn
+retina-face
+fire
+gunicorn
