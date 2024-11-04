@@ -3,7 +3,7 @@ import io
 from PIL import Image
 import pandas as pd
 
-api_base_url = "https://3bdf-2806-10b7-3-c248-285f-e846-87cf-3e85.ngrok-free.app"
+api_base_url = "http://192.168.1.83:10000"
 
 def fetch_attendance_data():
     try:
@@ -20,10 +20,12 @@ def send_image_for_prediction(image_file):
     try:
         response = requests.post(f"{api_base_url}/predict_image", files={"file": img_byte_arr.getvalue()})
         response.raise_for_status()
-        return response.json().get('prediction', 'Desconocido')
+        # Obtener tanto el nombre identificado como el estado
+        data = response.json()
+        return data.get('prediction', 'Desconocido'), data.get('status', 'Sin estado')
     except Exception as e:
         print(f"Error en la conexión con el servidor: {e}")
-        return None
+        return None, None
 
 def register_student(nombre_alumno, tuition_id, image_file):
     img_byte_arr = io.BytesIO()
@@ -35,7 +37,7 @@ def register_student(nombre_alumno, tuition_id, image_file):
             data={"label": nombre_alumno, "tuition_id": tuition_id}
         )
         response.raise_for_status()
-        return True
+        return True, f"Alumno '{nombre_alumno}' registrado con éxito."
     except Exception as e:
         print(f"Error al registrar alumno: {e}")
-        return False
+        return False, f"Error al registrar alumno '{nombre_alumno}': {e}"

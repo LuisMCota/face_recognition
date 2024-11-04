@@ -23,16 +23,31 @@ def tomar_asistencia():
     foto_asistencia = st.camera_input("Foto de asistencia")
     if foto_asistencia:
         st.image(foto_asistencia, caption="Foto Capturada para Verificación", use_column_width=True)
-        send_image_for_prediction(foto_asistencia)
+        
+        # Llamar a la función de predicción y recibir el nombre y el estado
+        nombre_identificado, estado = send_image_for_prediction(foto_asistencia)
+        
+        if nombre_identificado:
+            st.success(f"Asistencia registrada para: {nombre_identificado} - Estado: {estado}")
+        else:
+            st.error("No se pudo verificar la asistencia. Intente nuevamente.")
 
 def agregar_alumno():
     st.title("Agregar Nuevo Alumno")
     nombre_alumno = st.text_input("Nombre completo del Alumno")
     tuition_id = st.text_input("Tuition ID del Alumno")
     foto_alumno = st.camera_input("Captura una foto del alumno")
+    
     if st.button("Registrar Alumno") and nombre_alumno and tuition_id and foto_alumno:
-        register_student(nombre_alumno, tuition_id, foto_alumno)
-
+        # Llamar a la función de registro y recibir éxito o error junto con el mensaje
+        exito, mensaje = register_student(nombre_alumno, tuition_id, foto_alumno)
+        
+        # Mostrar mensaje de éxito o error
+        if exito:
+            st.success(mensaje)
+        else:
+            st.error(mensaje)
+            
 # Menú de la barra lateral
 with st.sidebar:
         selected = option_menu(
