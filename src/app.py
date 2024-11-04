@@ -23,14 +23,20 @@ def mostrar_asistencia():
 def tomar_asistencia():
     st.title("Tomar Asistencia")
     foto_asistencia = st.camera_input("Foto de asistencia")
+    
     if foto_asistencia:
+        # Mostrar la imagen capturada para confirmación visual
         st.image(foto_asistencia, caption="Foto Capturada para Verificación", use_column_width=True)
+        
+        # Llamar a la función de predicción para identificar al usuario
         nombre_identificado, estado = send_image_for_prediction(foto_asistencia)
         
+        # Verificar si el nombre fue identificado
         if nombre_identificado:
             st.success(f"Asistencia registrada para: {nombre_identificado} - Estado: {estado}")
         else:
-            st.error("No se pudo verificar la asistencia. Intente nuevamente.")
+            # Mensaje de error en caso de no autenticación
+            st.error("⚠️ No se pudo autenticar al usuario. Intente nuevamente o contacte al administrador.")
 
 # Registro de nuevo alumno
 def agregar_alumno():
