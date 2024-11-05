@@ -19,11 +19,21 @@ def mostrar_asistencia():
     else:
         st.warning("No hay registros de asistencia disponibles.")
 
+# Inicializa el estado de la sesión para controlar la re-captura de la foto
+if "retry_photo" not in st.session_state:
+    st.session_state["retry_photo"] = False
+
 # Toma de asistencia con foto
 def tomar_asistencia():
     st.title("Tomar Asistencia")
+
+    # Verifica si estamos en modo de reintento
+    if st.session_state["retry_photo"]:
+        st.info("Por favor, vuelve a capturar la foto para intentar nuevamente.")
+
+    # Captura de foto
     foto_asistencia = st.camera_input("Foto de asistencia")
-    
+
     if foto_asistencia:
         # Mostrar la imagen capturada para confirmación visual
         st.image(foto_asistencia, caption="Foto Capturada para Verificación", use_column_width=True)
@@ -32,15 +42,21 @@ def tomar_asistencia():
         nombre_identificado, estado = send_image_for_prediction(foto_asistencia)
         
         # Verificar si el nombre fue identificado correctamente
-        if nombre_identificado.lower() in ["unknown", "desconocido"]:
-            # Mostrar mensaje si el usuario no fue identificado
-            st.error("⚠️ Usuario no identificado. Intente nuevamente o contacte al administrador.")
-        elif nombre_identificado and estado:
-            # Mostrar éxito si el usuario fue identificado
+        if nombre_identificado and nombre_identificado.lower() not in ["unknown", "desconocido"]:
             st.success(f"Asistencia registrada para: {nombre_identificado} - Estado: {estado}")
+            st.session_state["retry_photo"] = False  # Resetear el estado de reintento
         else:
-            # Mensaje de error si hubo un problema en la conexión o predicción
-            st.error("⚠️ No se pudo conectar con el servidor para verificar la asistencia. Intente nuevamente más tarde.")
+            # Mostrar mensaje de error si el usuario no fue identificado o si hubo un error
+            st.error("⚠️ Usuario no identificado o asistencia no verificada.")
+            st.session_state["retry_photo"] = True  # Activar el estado de reintento
+
+            # Botón para reintentar la captura
+            if st.button("Volver a tomar foto"):
+                st.session_state["retry_photo"] = False  # Reiniciar el estado para nueva captura
+                st.experimental_rerun()  # Recargar para limpiar la foto capturada
+
+# Llama a la función para tomar asistencia
+tomar_asistencia()
 
 # Registro de nuevo alumno
 def agregar_alumno():
