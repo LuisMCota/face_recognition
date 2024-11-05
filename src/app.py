@@ -52,15 +52,16 @@ def tomar_asistencia():
         else:
             st.error("⚠️ No se pudo identificar al usuario. Intente nuevamente.")
             st.session_state["photo_taken"] = False  # Resetear el estado de captura
+            st.session_state["nombre_identificado"] = None
+            st.session_state["estado_identificado"] = None
 
     # Botón "Volver a tomar foto" siempre disponible
     if st.button("Volver a tomar foto"):
         st.session_state["photo_taken"] = False
         st.session_state["nombre_identificado"] = None
         st.session_state["estado_identificado"] = None
-        st.experimental_rerun()  # Recargar para limpiar la foto capturada y los resultados
 
-    # Botón "Pasar Asistencia" solo activo si se ha capturado e identificado correctamente una persona
+    # Botón "Pasar Asistencia" solo activo si el usuario fue identificado correctamente
     if st.session_state["photo_taken"] and st.session_state["nombre_identificado"] and st.session_state["nombre_identificado"].lower() not in ["unknown", "desconocido"]:
         if st.button("Pasar Asistencia"):
             st.success(f"Asistencia registrada para: {st.session_state['nombre_identificado']} - Estado: {st.session_state['estado_identificado']}")
@@ -68,7 +69,6 @@ def tomar_asistencia():
             st.session_state["photo_taken"] = False
             st.session_state["nombre_identificado"] = None
             st.session_state["estado_identificado"] = None
-            st.experimental_rerun()
 
 # Función para registrar un nuevo alumno
 def agregar_alumno():
