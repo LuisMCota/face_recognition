@@ -7,7 +7,7 @@ import pandas as pd
 
 set_styles()
 
-# Panel de asistencia
+# Función para mostrar el panel de asistencia
 def mostrar_asistencia():
     st.title("Registro de Asistencia")
     df = fetch_attendance_data()
@@ -23,7 +23,7 @@ def mostrar_asistencia():
 if "retry_photo" not in st.session_state:
     st.session_state["retry_photo"] = False
 
-# Toma de asistencia con foto
+# Función para tomar asistencia con foto
 def tomar_asistencia():
     st.title("Tomar Asistencia")
 
@@ -55,10 +55,7 @@ def tomar_asistencia():
                 st.session_state["retry_photo"] = False  # Reiniciar el estado para nueva captura
                 st.experimental_rerun()  # Recargar para limpiar la foto capturada
 
-# Llama a la función para tomar asistencia
-tomar_asistencia()
-
-# Registro de nuevo alumno
+# Función para registrar un nuevo alumno
 def agregar_alumno():
     st.title("Agregar Nuevo Alumno")
     nombre_alumno = st.text_input("Nombre completo del Alumno")
