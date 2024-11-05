@@ -16,6 +16,15 @@ def mostrar_asistencia():
         filtered_df = apply_filters(df)
         display_totals(filtered_df)
         display_attendance_chart(filtered_df)
+        
+        # Agregar botón para descargar la asistencia como CSV
+        csv = filtered_df.to_csv(index=False)
+        st.download_button(
+            label="Descargar lista de asistencias",
+            data=csv,
+            file_name="asistencia_filtrada.csv",
+            mime="text/csv"
+        )
     else:
         st.warning("No hay registros de asistencia disponibles.")
 
