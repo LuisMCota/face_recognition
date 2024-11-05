@@ -31,12 +31,16 @@ def tomar_asistencia():
         # Llamar a la función de predicción para identificar al usuario
         nombre_identificado, estado = send_image_for_prediction(foto_asistencia)
         
-        # Verificar si el nombre fue identificado
-        if nombre_identificado:
+        # Verificar si el nombre fue identificado correctamente
+        if nombre_identificado.lower() in ["unknown", "desconocido"]:
+            # Mostrar mensaje si el usuario no fue identificado
+            st.error("⚠️ Usuario no identificado. Intente nuevamente o contacte al administrador.")
+        elif nombre_identificado and estado:
+            # Mostrar éxito si el usuario fue identificado
             st.success(f"Asistencia registrada para: {nombre_identificado} - Estado: {estado}")
         else:
-            # Mensaje de error en caso de no autenticación
-            st.error("⚠️ No se pudo autenticar al usuario. Intente nuevamente o contacte al administrador.")
+            # Mensaje de error si hubo un problema en la conexión o predicción
+            st.error("⚠️ No se pudo conectar con el servidor para verificar la asistencia. Intente nuevamente más tarde.")
 
 # Registro de nuevo alumno
 def agregar_alumno():
