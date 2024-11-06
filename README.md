@@ -6,56 +6,50 @@
 
 Face recognition app for assistance list
 
-## Project Organization
+# Classroom Attendance with Face Recognition
 
-```
-├── LICENSE            <- Open-source license if one is chosen
-├── Makefile           <- Makefile with convenience commands like `make data` or `make train`
-├── README.md          <- The top-level README for developers using this project.
-├── data
-│   ├── external       <- Data from third party sources.
-│   ├── interim        <- Intermediate data that has been transformed.
-│   ├── processed      <- The final, canonical data sets for modeling.
-│   └── raw            <- The original, immutable data dump.
-│
-├── docs               <- A default mkdocs project; see www.mkdocs.org for details
-│
-├── models             <- Trained and serialized models, model predictions, or model summaries
-│
-├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-│                         the creator's initials, and a short `-` delimited description, e.g.
-│                         `1.0-jqp-initial-data-exploration`.
-│
-├── pyproject.toml     <- Project configuration file with package metadata for 
-│                         1 and configuration for tools like black
-│
-├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-│
-├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-│   └── figures        <- Generated graphics and figures to be used in reporting
-│
-├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-│                         generated with `pip freeze > requirements.txt`
-│
-├── setup.cfg          <- Configuration file for flake8
-│
-└── 1   <- Source code for use in this project.
-    │
-    ├── __init__.py             <- Makes 1 a Python module
-    │
-    ├── config.py               <- Store useful variables and configuration
-    │
-    ├── dataset.py              <- Scripts to download or generate data
-    │
-    ├── features.py             <- Code to create features for modeling
-    │
-    ├── modeling                
-    │   ├── __init__.py 
-    │   ├── predict.py          <- Code to run model inference with trained models          
-    │   └── train.py            <- Code to train models
-    │
-    └── plots.py                <- Code to create visualizations
-```
+## Project Overview
+This project is a classroom attendance system that utilizes facial recognition for tracking student attendance. The system is designed to streamline the attendance process by automatically identifying students through their facial features. The project is built with several integrated technologies for both backend and frontend functionality.
 
---------
+## Key Components
+
+- **Flask API**: Used as the backend framework to handle API requests.
+- **DeepFace FaceNet Model**: The face recognition model is based on the DeepFace FaceNet architecture.
+- **Google Cloud Run**: Hosts the Flask API and manages scalable deployment.
+- **Google Cloud Storage**: Stores the trained face recognition model, allowing it to be accessed and updated by the Cloud Run instance.
+- **DynamoDB**: Serves as the database for storing attendance records and user information.
+- **Streamlit Frontend**: Provides a user interface for accessing attendance data and interacting with the system.
+
+## Features and Endpoints
+
+The system exposes three main endpoints for interacting with the facial recognition and attendance tracking functionalities:
+
+### 1. **Recognition Endpoint**
+   - **Purpose**: Recognizes a user by their face and marks attendance.
+   - **Description**: This endpoint receives an image of the user, processes it through the DeepFace FaceNet model, and, if the user is recognized, logs their attendance in DynamoDB.
+
+### 2. **New User Endpoint**
+   - **Purpose**: Adds a new user to the system.
+   - **Description**: This endpoint allows the addition of a new user's face data by retraining the model with the new data, updating the saved model in the Google Cloud Storage bucket. The updated model is then deployed to the Cloud Run instance.
+
+### 3. **Attendance Data Endpoint**
+   - **Purpose**: Retrieves attendance records.
+   - **Description**: This endpoint fetches attendance data from DynamoDB, making it available for review or analytics.
+
+## System Architecture
+
+- **API (Flask)**: Handles all incoming requests and routes them to the appropriate endpoints.
+- **Face Recognition Model (DeepFace)**: The DeepFace FaceNet model, hosted in a Google Cloud Storage bucket, provides the facial recognition capabilities.
+- **Google Cloud Run**: The Flask API, connected to the stored model in Google Cloud Storage, is hosted on Google Cloud Run for efficient scaling and management.
+- **DynamoDB**: Manages the storage of attendance records and user data, supporting real-time retrieval and updates.
+- **Streamlit (Frontend)**: Presents an intuitive user interface where users can view attendance data and interact with the recognition system.
+
+## Getting Started
+
+### Prerequisites
+- Google Cloud Platform (GCP) account
+- AWS DynamoDB setup
+- Python 3.12
+- Streamlit, Flask, DeepFace libraries
+
 
