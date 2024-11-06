@@ -52,4 +52,45 @@ The system exposes three main endpoints for interacting with the facial recognit
 - Python 3.12
 - Streamlit, Flask, DeepFace libraries
 
+### Running the Project
 
+#### Option 1: Deploy on GCP and AWS
+1. **Prepare the Docker Image**:
+   - Add your API code and `requirements.txt` to a Dockerfile.
+   - Build and push the Docker image to Google Container Registry.
+
+2. **Deploy to Google Cloud Run**:
+   - Use the built Docker image to deploy the API on Google Cloud Run.
+   - Set environment variables and connect the API to Google Cloud Storage for the model.
+
+3. **DynamoDB Connection**:
+   - Use `boto3` to connect the API to DynamoDB for attendance and user data.
+
+4. **Streamlit Frontend**:
+   - Deploy the Streamlit application, ensuring it connects to the Cloud Run API URL for endpoint access.
+
+#### Option 2: Run Locally
+1. **Set Up API**:
+   - Download the API code and remove any GCP dependencies if they aren’t required for local execution.
+   - Keep the DynamoDB connection via `boto3` if you need database access.
+   - Run the API locally with:
+     ```bash
+     python3 api.py
+     ```
+
+2. **Run Streamlit Frontend**:
+   - Adjust the API URL in the Streamlit code to point to `http://localhost:5000` (or the appropriate port on your local machine).
+   - Start the frontend with:
+     ```bash
+     streamlit run app.py
+     ```
+
+## Contributing
+Contributions are welcome! Please open an issue or submit a pull request for any feature requests, improvements, or bug fixes.
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+This project provides an automated, scalable solution for classroom attendance management through facial recognition.
