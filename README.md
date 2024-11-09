@@ -94,3 +94,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 This project provides an automated, scalable solution for classroom attendance management through facial recognition.
+
+Reference Images of the frontend working all-together
+
+![image](https://github.com/user-attachments/assets/3ec0ff49-fd5e-4e92-b25b-a32725e40145)
+
+![image](https://github.com/user-attachments/assets/37019c54-059c-4018-8d30-5858ca1e8f8a)
+
+![image](https://github.com/user-attachments/assets/7f76adb4-b467-41c5-9344-31f39427d02d)
